@@ -1,20 +1,19 @@
-import javax.swing.*;
-import java.util.Random;
 import java.util.Scanner;
 
 public class Main {
 
     public static void main(String[] args) {
         Board board = new Board();
-
-        board.printBoard();
-        System.out.println();
         Scanner scanner = new Scanner(System.in);
 
-        while (true){
+        System.out.println(board.getBoard());
+
+        while (board.gameIsNotOver()) {
             board.move(scanner.next());
-            board.printBoard();
+            System.out.println(board.getBoard());
             System.out.println();
         }
+
+        System.out.println("Your final score is: " + board.getScore());
     }
 }

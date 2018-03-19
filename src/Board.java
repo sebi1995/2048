@@ -4,182 +4,280 @@ public class Board {
 
     public Piece[][] board;
     public int score;
+    private int size = 4;
 
     Board() {
         score = 0;
         initBoard();
-//        board[0][4] = new Piece();
-//        board[0][3] = new Piece();
-//        board[0][2] = new Piece();
-//        board[0][1] = new Piece();
+        board[0][3] = new Piece();
+        board[0][2] = new Piece();
+        board[0][1] = new Piece();
     }
 
     private void initBoard() {
-        board = new Piece[6][6];
-        board[new Random().nextInt(6)][new Random().nextInt(6)] = new Piece();
+        board = new Piece[size][size];
+        board[new Random().nextInt(size)][new Random().nextInt(size)] = new Piece();
     }
 
-    public void printBoard() {
-        for (int i = 0; i < 6; ++i) {
-            for (int j = 0; j < 6; ++j) {
-                if (board[i][j] != null) {
-                    System.out.print(board[i][j].getNumber() + " ");
-                } else System.out.print("_ ");
+    public String getBoard() {
+        StringBuilder sb = new StringBuilder();
+
+        Integer longest = 0;
+
+        for (int y = 0; y < size; ++y) {
+            for (int x = 0; x < size; ++x) {
+                if (board[y][x] != null) {
+                    String placeHolder = board[y][x].getNumber() + "";
+                    longest = (placeHolder.length() > longest) ? placeHolder.length() : longest;
+                }
             }
-            System.out.println();
         }
+
+        for (int y = 0; y < size; ++y) {
+            for (int x = 0; x < size; ++x) {
+                if (board[y][x] != null) {
+                    String placeHolder = board[y][x].getNumber() + "";
+                    sb.append(placeHolder);
+                    for (int i = placeHolder.length(); i < longest; ++i) {
+                        sb.append("_");
+                    }
+                    sb.append(" ");
+                } else {
+                    for (int i = 0; i < longest; ++i) {
+                        sb.append("_");
+                    }
+                    sb.append(" ");
+                }
+            }
+            sb.append("\n");
+        }
+
+        return sb.toString();
     }
 
     public void move(String direction) {
 
-        int YY, XX;
         boolean wasMoveMade = false;
 
         switch (direction) {
-            case "l":
-                for (int x = 1; x < 6; ++x) {
-                    for (int y = 0; y < 6; ++y) {
-                        if (board[y][x] != null) {
-                            for (int X = x - 1; X >= 0; --X) {
-                                if (X == 0 || board[y][X] != null) {
-                                    if (board[y][X] == null) {
-                                        board[y][X] = board[y][x];
-                                        board[y][x] = null;
-                                        wasMoveMade = true;
-                                        break;
-                                    } else {
-                                        if (board[y][X].getNumber() == board[y][x].getNumber()) {
-                                            board[y][X].setNumber(board[y][X].getNumber() * 2);
-                                            board[y][x] = null;
-                                            wasMoveMade = true;
-                                            break;
-                                        } else {
-                                            if (X + 1 != x) {
-                                                board[y][X + 1] = board[y][x];
-                                                board[y][x] = null;
-                                            }
-                                            wasMoveMade = true;
-                                            break;
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-                break;
             case "u":
-                for (int y = 1; y <= 5; ++y) {
-                    for (int x = 0; x <= 5; ++x) {
-                        if (board[y][x] != null) {
-                            for (int Y = y - 1; Y >= 0; --Y) {
-                                if (Y == 0 || board[Y][x] != null) {
-                                    if (board[Y][x] == null) {
-                                        board[Y][x] = board[y][x];
-                                        board[y][x] = null;
-                                        wasMoveMade = true;
-                                        break;
-                                    } else {
-                                        if (board[Y][x].getNumber() == board[y][x].getNumber()) {
-                                            board[Y][x].setNumber(board[Y][x].getNumber() * 2);
-                                            board[y][x] = null;
-                                            wasMoveMade = true;
-                                            break;
-                                        } else {
-                                            if (Y + 1 != y) {
-                                                board[Y + 1][x] = board[y][x];
-                                                board[y][x] = null;
-                                            }
-                                            wasMoveMade = true;
-                                            break;
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
+                wasMoveMade = canMoveUp(true);
                 break;
             case "r":
-                for (int x = 4; x >= 0; --x) {
-                    for (int y = 0; y < 6; ++y) {
-                        if (board[y][x] != null) {
-                            for (int X = x + 1; X <= 5; ++X) {
-                                if (X == 5 || board[y][X] != null) {
-                                    if (board[y][X] == null) {
-                                        board[y][X] = board[y][x];
-                                        board[y][x] = null;
-                                        wasMoveMade = true;
-                                        break;
-                                    } else {
-                                        if (board[y][X].getNumber() == board[y][x].getNumber()) {
-                                            board[y][X].setNumber(board[y][X].getNumber() * 2);
-                                            board[y][x] = null;
-                                            wasMoveMade = true;
-                                            break;
-                                        } else {
-                                            if (X - 1 != y) {
-                                                board[y][X - 1] = board[y][x];
-                                                board[y][x] = null;
-                                            }
-                                            wasMoveMade = true;
-                                            break;
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
+                wasMoveMade = canMoveRight(true);
                 break;
             case "d":
-                for (int y = 4; y >= 0; --y) {
-                    for (int x = 0; x < 6; ++x) {
-                        if (board[y][x] != null) {
-                            for (int Y = y + 1; Y <= 5; ++Y) {
-                                if (Y == 5 || board[Y][x] != null) {
-                                    if (board[Y][x] == null) {
-                                        board[Y][x] = board[y][x];
-                                        board[y][x] = null;
-                                        wasMoveMade = true;
-                                        break;
-                                    } else {
-                                        if (board[Y][x].getNumber() == board[y][x].getNumber()) {
-                                            board[Y][x].setNumber(board[Y][x].getNumber() * 2);
-                                            board[y][x] = null;
-                                            wasMoveMade = true;
-                                            break;
-                                        } else {
-                                            if (Y - 1 != y) {
-                                                board[Y - 1][x] = board[y][x];
-                                                board[y][x] = null;
-                                            }
-                                            wasMoveMade = true;
-                                            break;
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
+                wasMoveMade = canMoveDown(true);
+                break;
+            case "l":
+                wasMoveMade = canMoveLeft(true);
                 break;
             default:
                 System.out.println("Wrong input");
                 break;
         }
 
-
         //this part adds a new piece to board
         if (wasMoveMade) {
             while (true) {
-                YY = new Random().nextInt(6);
-                XX = new Random().nextInt(6);
-                if (board[YY][XX] == null) {
-                    board[YY][XX] = new Piece();
+                int y = new Random().nextInt(size);
+                int x = new Random().nextInt(size);
+                if (board[y][x] == null) {
+                    board[y][x] = new Piece();
                     break;
                 }
             }
         }
+    }
+
+    private boolean canMoveUp(boolean move) {
+
+        boolean returnBool = false;
+
+        for (int y = 1; y < size; ++y) {
+            for (int x = 0; x < size; ++x) {
+                if (board[y][x] != null) {
+                    for (int i = y - 1; i >= 0; --i) {
+                        if (i == 0 || board[i][x] != null) {
+                            if (board[i][x] == null) {
+                                if (move) {
+                                    board[i][x] = board[y][x];
+                                    board[y][x] = null;
+                                }
+                                returnBool = true;
+                                break;
+                            } else {
+                                if (board[i][x].getNumber() == board[y][x].getNumber()) {
+                                    if (move) {
+                                        board[i][x].setNumber(board[i][x].getNumber() * 2);
+                                        board[y][x] = null;
+                                    }
+                                    returnBool = true;
+                                    break;
+                                } else {
+                                    if (i + 1 != y) {
+                                        if (move) {
+                                            board[i + 1][x] = board[y][x];
+                                            board[y][x] = null;
+                                        }
+                                        returnBool = true;
+                                        break;
+                                    }
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return returnBool;
+    }
+    private boolean canMoveRight(boolean move) {
+
+        boolean returnBool = false;
+
+        for (int x = size-2; x >= 0; --x) {
+            for (int y = 0; y < size; ++y) {
+                if (board[y][x] != null) {
+                    for (int i = x + 1; i <size; ++i) {
+                        if (i == size-1 || board[y][i] != null) {
+                            if (board[y][i] == null) {
+                                if (move) {
+                                    board[y][i] = board[y][x];
+                                    board[y][x] = null;
+                                }
+                                returnBool = true;
+                                break;
+                            } else {
+                                if (board[y][i].getNumber() == board[y][x].getNumber()) {
+                                    if (move) {
+                                        board[y][i].setNumber(board[y][i].getNumber() * 2);
+                                        board[y][x] = null;
+                                    }
+                                    returnBool = true;
+                                    break;
+                                } else {
+                                    if (i - 1 != x) {
+                                        if (move) {
+                                            board[y][i - 1] = board[y][x];
+                                            board[y][x] = null;
+                                        }
+                                        returnBool = true;
+                                        break;
+                                    }
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return returnBool;
+    }
+    private boolean canMoveDown(boolean move) {
+
+        boolean returnBool = false;
+
+        for (int y = size-2; y >= 0; --y) {
+            for (int x = 0; x < size; ++x) {
+                if (board[y][x] != null) {
+                    for (int i = y + 1; i <size; ++i) {
+                        if (i == size-1 || board[i][x] != null) {
+                            if (board[i][x] == null) {
+                                if (move) {
+                                    board[i][x] = board[y][x];
+                                    board[y][x] = null;
+                                }
+                                returnBool = true;
+                                break;
+                            } else {
+                                if (board[i][x].getNumber() == board[y][x].getNumber()) {
+                                    if (move) {
+                                        board[i][x].setNumber(board[i][x].getNumber() * 2);
+                                        board[y][x] = null;
+                                    }
+                                    returnBool = true;
+                                    break;
+                                } else {
+                                    if (i - 1 != y) {
+                                        if (move) {
+                                            board[i - 1][x] = board[y][x];
+                                            board[y][x] = null;
+                                        }
+                                        returnBool = true;
+                                        break;
+                                    }
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return returnBool;
+    }
+    private boolean canMoveLeft(boolean move) {
+
+        boolean returnBool = false;
+
+        for (int x = 1; x < size; ++x) {
+            for (int y = 0; y < size; ++y) {
+                if (board[y][x] != null) {
+                    for (int i = x - 1; i >= 0; --i) {
+                        if (board[y][i] != null || i == 0) {
+                            if (board[y][i] == null) {
+                                if (move) {
+                                    board[y][i] = board[y][x];
+                                    board[y][x] = null;
+                                }
+                                returnBool = true;
+                                break;
+                            } else {
+                                if (board[y][i].getNumber() == board[y][x].getNumber()) {
+                                    if (move) {
+                                        board[y][i].setNumber(board[y][i].getNumber() * 2);
+                                        board[y][x] = null;
+                                    }
+                                    returnBool = true;
+                                    break;
+                                } else {
+                                    if (i + 1 != x) {
+                                        if (move) {
+                                            board[y][i + 1] = board[y][x];
+                                            board[y][x] = null;
+                                        }
+                                        returnBool = true;
+                                        break;
+                                    }
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return returnBool;
+    }
+
+    public boolean gameIsNotOver() {
+        if (!canMoveUp(false) && !canMoveRight(false) && !canMoveDown(false) && !canMoveLeft(false)){
+            return false;
+        } else return true;
+    }
+
+    public int getScore() {
+        Integer score = 0;
+
+        for (int y = 0; y <size; ++y) {
+            for (int x = 0; x <size; ++x) {
+                score += board[y][x].getNumber();
+            }
+        }
+
+        return score;
     }
 }
