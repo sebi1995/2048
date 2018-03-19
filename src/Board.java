@@ -4,14 +4,12 @@ public class Board {
 
     public Piece[][] board;
     public int score;
-    private int size = 4;
+    private int size;
 
-    Board() {
+    Board(int size) {
         score = 0;
+        this.size = size;
         initBoard();
-        board[0][3] = new Piece();
-        board[0][2] = new Piece();
-        board[0][1] = new Piece();
     }
 
     private void initBoard() {
